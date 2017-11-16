@@ -25,6 +25,8 @@ public class BitcoinPriceEurClock extends Clock {
             DateFormat.SHORT,
             DateFormat.SHORT);
 
+    private final static int EVERY = 20;
+    private static int current=-1;
 
     public BitcoinPriceEurClock() {
         super(9, "BTC/EUR last price from coinmarketcap.com", R.drawable.bitcoin);
@@ -33,6 +35,11 @@ public class BitcoinPriceEurClock extends Clock {
     String url = "https://api.coinmarketcap.com/v1/ticker/bitcoin/?convert=EUR";
 
     public void run(final Context context, final int appWidgetId){
+        current++;
+        if(current!=0 && current < EVERY)
+            return;
+        current=0;
+
         new Runnable() {
             @Override
             public void run() {
@@ -45,7 +52,7 @@ public class BitcoinPriceEurClock extends Clock {
                         super.onSuccess(statusCode, headers, response);
                         try {
                             final JSONObject jsonObject = response.getJSONObject(0);
-                            String height = "€ "+jsonObject.getString("price_usd");
+                            String height = "€ "+jsonObject.getString("price_eur");
                             Long lastUpdated = Long.parseLong( jsonObject.getString("last_updated") );
 
                             final Date date = new Date(lastUpdated*1000L);
