@@ -12,6 +12,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.util.Date;
 
 import cz.msebera.android.httpclient.Header;
@@ -52,7 +53,11 @@ public class BitcoinPriceEurClock extends Clock {
                         super.onSuccess(statusCode, headers, response);
                         try {
                             final JSONObject jsonObject = response.getJSONObject(0);
-                            String height = "€ "+jsonObject.getString("price_eur");
+
+                            DecimalFormat df = new DecimalFormat("#,###.######");
+                            String price = df.format( Double.valueOf(jsonObject.getString("price_eur")));
+
+                            String height = "€ " + price;
                             Long lastUpdated = Long.parseLong( jsonObject.getString("last_updated") );
 
                             final Date date = new Date(lastUpdated*1000L);
