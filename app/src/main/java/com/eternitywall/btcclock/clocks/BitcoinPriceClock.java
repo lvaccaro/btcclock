@@ -54,7 +54,7 @@ public class BitcoinPriceClock extends Clock {
                         try {
                             final JSONObject jsonObject = response.getJSONObject(0);
 
-                            DecimalFormat df = new DecimalFormat("#,###.######");
+                            DecimalFormat df = new DecimalFormat("#,###.##");
                             String price = df.format( Double.valueOf(jsonObject.getString("price_usd")));
                             String height = "$ " + price;
 
