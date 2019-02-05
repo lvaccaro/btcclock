@@ -67,7 +67,6 @@ public class ClockWidgetConfigureActivity extends Activity implements RadioAdapt
         // out of the widget placement if the user presses the back button.
         setResult(RESULT_CANCELED);
 
-        setContentView(R.layout.clock_widget_configure);
 
         // Find the widget id from the intent.
         Intent intent = getIntent();
@@ -79,9 +78,10 @@ public class ClockWidgetConfigureActivity extends Activity implements RadioAdapt
 
         // If this activity was started with an intent without an app widget ID, finish with an error.
         if (mAppWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) {
-            finish();
+            setContentView(R.layout.activity_about);
             return;
         }
+        setContentView(R.layout.clock_widget_configure);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("Blockchain Clock");
