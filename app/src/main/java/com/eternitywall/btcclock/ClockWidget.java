@@ -4,7 +4,6 @@ import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Build;
 import android.util.Log;
 import android.widget.RemoteViews;
@@ -24,9 +23,8 @@ public class ClockWidget extends AppWidgetProvider {
     @Override
     public void onDeleted(final Context context, final int[] appWidgetIds) {
         // When the user deletes the widget, delete the preference associated with it.
-        for(int id : appWidgetIds) {
+        for (final int id : appWidgetIds)
             ClockWidgetConfigureActivity.deleteIdPref(context, id);
-        }
     }
 
     @Override
@@ -43,26 +41,24 @@ public class ClockWidget extends AppWidgetProvider {
     }
 
 
-    public static void start(final Context context){
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+    public static void start(final Context context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
             SyncJobService.start(context);
-        } else {
+        else
             UpdateTimeService.start(context);
-        }
     }
 
-    public static void stop(final Context context){
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+    public static void stop(final Context context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
             SyncJobService.stop(context);
-        } else {
+        else
             UpdateTimeService.stop(context);
-        }
     }
 
     public static void tick(final Context context, final Clock.UpdateListener listener) {
-        int[] ids = AppWidgetManager.getInstance(context).getAppWidgetIds(new ComponentName(context, ClockWidget.class));
-        for (int id : ids) {
-            Clock clock = ClockWidgetConfigureActivity.loadIdPref(context, id);
+        final int[] ids = AppWidgetManager.getInstance(context).getAppWidgetIds(new ComponentName(context, ClockWidget.class));
+        for (final int id : ids) {
+            final Clock clock = ClockWidgetConfigureActivity.loadIdPref(context, id);
             Log.d("widget", String.valueOf(clock.id));
             clock.updateListener = listener;
             clock.run(context, id);
@@ -70,7 +66,6 @@ public class ClockWidget extends AppWidgetProvider {
     }
 
     public static void callback(final Context context, final int appWidgetId, final String time, String description, final int resource) {
-
         Log.d("widget", "callback");
         final RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.clock_widget);
         views.setTextViewText(R.id.tvDescription, description);
@@ -80,6 +75,5 @@ public class ClockWidget extends AppWidgetProvider {
         final AppWidgetManager mAppWidgetManager = AppWidgetManager.getInstance(context);
         mAppWidgetManager.updateAppWidget(appWidgetId,views);
     }
-
 }
 

@@ -10,13 +10,13 @@ import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.util.Log;
 
-
 @RequiresApi(api = Build.VERSION_CODES.O)
 public class SyncJobService  extends JobService implements Clock.UpdateListener  {
+
     @Override
     public boolean onStartJob(final JobParameters jobParameters) {
-        Log.d(this.getPackageName(),"onStartJob");
-        Context context = getApplicationContext();
+        Log.d(getPackageName(),"onStartJob");
+        final Context context = getApplicationContext();
         ClockWidget.tick(context,this);
         start(context);
         return true;
@@ -24,33 +24,28 @@ public class SyncJobService  extends JobService implements Clock.UpdateListener 
 
     @Override
     public boolean onStopJob(final JobParameters jobParameters) {
-        Log.d(this.getPackageName(),"onStopJob");
+        Log.d(getPackageName(),"onStopJob");
         return true;
     }
 
     public static void stop(final Context context) {
-        JobScheduler jobScheduler = (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
+        final JobScheduler jobScheduler = (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
         jobScheduler.cancelAll();
     }
 
     public static void start(final Context context) {
-        ComponentName serviceComponent = new ComponentName(context, SyncJobService.class);
-        JobInfo.Builder builder = new JobInfo.Builder(0, serviceComponent);
+        final ComponentName serviceComponent = new ComponentName(context, SyncJobService.class);
+        final JobInfo.Builder builder = new JobInfo.Builder(0, serviceComponent);
         builder.setMinimumLatency(20 * 1000); // wait at least
         builder.setOverrideDeadline(30 *1000); // maximum delay
         //builder.setPeriodic(10*0000);
         //builder.setPersisted(true);
         builder.setRequiresDeviceIdle(false); // device should not be only idle
         builder.setRequiresCharging(false); // we don't care if the device is charging or not
-        JobScheduler jobScheduler = context.getSystemService(JobScheduler.class);
-        int result = jobScheduler.schedule(builder.build());
-        if (result==JobScheduler.RESULT_SUCCESS){
-            Log.d(SyncJobService.class.getName(),"result: success");
-        } else {
-            Log.d(SyncJobService.class.getName(),"result: failure");
-        }
+        final JobScheduler jobScheduler = context.getSystemService(JobScheduler.class);
+        final int result = jobScheduler.schedule(builder.build());
+        Log.d(SyncJobService.class.getName(),result == JobScheduler.RESULT_SUCCESS ? "success" : "failure");
     }
-
 
     @Override
     public void callback(final Context context, final int appWidgetId, final String time, final String description, final int resource) {

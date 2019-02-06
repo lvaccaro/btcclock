@@ -13,64 +13,47 @@ import org.json.JSONObject;
 
 import cz.msebera.android.httpclient.Header;
 
-/**
- * Created by luca on 26/09/2017.
- */
-
 public class BitcoinClock extends Clock {
+    private static final String url = "https://blockstream.info/api/blocks";
+    private static final String title = "BITCOIN: blockchain height";
 
     public BitcoinClock() {
-        super(2, "BITCOIN: blockchain height", R.drawable.bitcoin);
+        super(2, title, R.drawable.bitcoin);
     }
 
-    String url = "https://insight.bitpay.com/api/blocks?limit=1";
-
-    public void run(final Context context, final int appWidgetId){
+    public void run(final Context context, final int appWidgetId) {
         new Runnable() {
             @Override
             public void run() {
 
-                AsyncHttpClient client = new AsyncHttpClient();
-
-                client.get(url,new JsonHttpResponseHandler(){
+                final AsyncHttpClient client = new AsyncHttpClient();
+                client.get(url, new JsonHttpResponseHandler() {
 
                     @Override
-                    public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                    public void onSuccess(final int statusCode, final Header[] headers, final JSONArray response) {
                         super.onSuccess(statusCode, headers, response);
-                        JSONObject json = null;
                         try {
-                            json = (JSONObject) response.getJSONArray("blocks").get(0);
-                            String height = String.valueOf(json.getLong("height"));
-                            String hash = json.getString("hash");
-                            hash = hash.substring(0,24) + "…" + hash.substring(56);
-                            BitcoinClock.this.updateListener.callback(context, appWidgetId, height, hash, BitcoinClock.this.resource);
-
-                        } catch (JSONException e) {
+                            final JSONObject json = (JSONObject) response.get(0);
+                            final String height = String.valueOf(json.getLong("height"));
+                            final String hash = json.getString("id");
+                            final String subHash = hash.substring(0,24) + "…" + hash.substring(56);
+                            BitcoinClock.this.updateListener.callback(context, appWidgetId, height, subHash, BitcoinClock.this.resource);
+                        } catch (final JSONException e) {
                             e.printStackTrace();
                         }
                     }
 
                     @Override
-                    public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-                        super.onSuccess(statusCode, headers, response);
-                        JSONObject json = null;
-                    }
-
-                    @Override
-                    public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                    public void onFailure(final int statusCode, final Header[] headers, final Throwable throwable, final JSONObject errorResponse) {
                         super.onFailure(statusCode, headers, throwable, errorResponse);
                     }
 
-
                     @Override
-                    public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                    public void onFailure(final int statusCode, final Header[] headers, final String responseString, final Throwable throwable) {
                         super.onFailure(statusCode, headers, responseString, throwable);
                     }
                 });
-
-
             }
         }.run();
     }
-
 }

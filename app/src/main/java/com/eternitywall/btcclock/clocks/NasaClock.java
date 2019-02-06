@@ -13,60 +13,48 @@ import org.json.JSONObject;
 
 import cz.msebera.android.httpclient.Header;
 
-/**
- * Created by luca on 26/09/2017.
- */
-
 public class NasaClock extends Clock {
+    private static final String url = "https://api.nasa.gov/neo/rest/v1/stats?api_key=DEMO_KEY";
+    private static final String title = "NASA NEO: near earth object count";
 
     public NasaClock() {
-        super(4, "NASA NEO: near earth object count", R.drawable.earth);
+        super(4, title, R.drawable.earth);
     }
 
-    String url = "https://api.nasa.gov/neo/rest/v1/stats?api_key=DEMO_KEY";
 
-    public void run(final Context context, final int appWidgetId){
+    public void run(final Context context, final int appWidgetId) {
         new Runnable() {
             @Override
             public void run() {
 
-                AsyncHttpClient client = new AsyncHttpClient();
+                final AsyncHttpClient client = new AsyncHttpClient();
                 Log.d(getClass().getName(),"run");
 
-                client.get(url,new JsonHttpResponseHandler(){
+                client.get(url,new JsonHttpResponseHandler() {
 
                     @Override
-                    public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                    public void onSuccess(final int statusCode, final Header[] headers, final JSONObject response) {
                         super.onSuccess(statusCode, headers, response);
                         Log.d(getClass().getName(),response.toString());
-                        JSONObject json = null;
                         try {
-                            String count = String.valueOf(response.getLong("near_earth_object_count"));
+                            final String count = String.valueOf(response.getLong("near_earth_object_count"));
                             NasaClock.this.updateListener.callback(context, appWidgetId, count, NasaClock.this.name, NasaClock.this.resource);
-
-                        } catch (JSONException e) {
+                        } catch (final JSONException e) {
                             e.printStackTrace();
-                            Log.d(getClass().getName(),e.toString());
                         }
                     }
 
                     @Override
-                    public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                    public void onFailure(final int statusCode, final Header[] headers, final Throwable throwable, final JSONObject errorResponse) {
                         super.onFailure(statusCode, headers, throwable, errorResponse);
-                        Log.d(getClass().getName(),errorResponse.toString());
                     }
-
 
                     @Override
-                    public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                    public void onFailure(final int statusCode, final Header[] headers, final String responseString, final Throwable throwable) {
                         super.onFailure(statusCode, headers, responseString, throwable);
-                        Log.d(getClass().getName(),responseString);
                     }
                 });
-
-
             }
         }.run();
     }
-
 }

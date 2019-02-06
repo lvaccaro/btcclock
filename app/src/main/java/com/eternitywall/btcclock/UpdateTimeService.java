@@ -1,6 +1,5 @@
 package com.eternitywall.btcclock;
 
-
 import android.app.Service;
 import android.appwidget.AppWidgetManager;
 import android.content.BroadcastReceiver;
@@ -11,7 +10,6 @@ import android.content.IntentFilter;
 import android.os.IBinder;
 import android.util.Log;
 import android.widget.RemoteViews;
-
 
 public final class UpdateTimeService extends Service implements Clock.UpdateListener {
     static final String UPDATE_TIME = "com.eternitywall.btcclock.action.UPDATE_TIME";
@@ -24,13 +22,13 @@ public final class UpdateTimeService extends Service implements Clock.UpdateList
         mIntentFilter.addAction(Intent.ACTION_TIMEZONE_CHANGED);
     }
 
-    public static void start(final Context context){
+    public static void start(final Context context) {
         final Intent intent = new Intent(UpdateTimeService.UPDATE_TIME);
         intent.setPackage("com.eternitywall.btcclock");
         context.startService(intent);
     }
-    public static void stop(final Context context){
-        Intent service = new Intent(context.getApplicationContext(), UpdateTimeService.class);
+    public static void stop(final Context context) {
+        final Intent service = new Intent(context.getApplicationContext(), UpdateTimeService.class);
         context.stopService(service);
     }
 
@@ -55,7 +53,7 @@ public final class UpdateTimeService extends Service implements Clock.UpdateList
 
         if (intent != null) {
             if (UPDATE_TIME.equals(intent.getAction())) {
-                Context context = getApplicationContext();
+                final Context context = getApplicationContext();
                 ClockWidget.tick(context, UpdateTimeService.this);
             }
         }

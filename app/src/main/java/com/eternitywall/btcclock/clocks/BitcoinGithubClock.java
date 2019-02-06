@@ -12,54 +12,46 @@ import org.json.JSONObject;
 
 import cz.msebera.android.httpclient.Header;
 
-/**
- * Created by luca on 26/09/2017.
- */
-
 public class BitcoinGithubClock extends Clock {
+    private static final String url = "https://api.github.com/repos/bitcoin/bitcoin/commits/master";
+    private static final String title = "BITCOIN: sha of the last commit on github";
 
     public BitcoinGithubClock() {
-        super(5, "BITCOIN: sha of the last commit on github", R.drawable.bitcoin);
+        super(5, title, R.drawable.bitcoin);
     }
 
-    String url = "https://api.github.com/repos/bitcoin/bitcoin/commits/master";
-
-    public void run(final Context context, final int appWidgetId){
+    public void run(final Context context, final int appWidgetId) {
         new Runnable() {
             @Override
             public void run() {
 
-                AsyncHttpClient client = new AsyncHttpClient();
+                final AsyncHttpClient client = new AsyncHttpClient();
                 client.addHeader("User-Agent","Awesome-Octocat-App");
-                client.get(url,  new JsonHttpResponseHandler(){
+                client.get(url,  new JsonHttpResponseHandler() {
 
                     @Override
-                    public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                    public void onSuccess(final int statusCode, final Header[] headers, final JSONObject response) {
                         super.onSuccess(statusCode, headers, response);
                         try {
-                            String height = response.getString("sha");
+                            final String height = response.getString("sha");
                             BitcoinGithubClock.this.updateListener.callback(context, appWidgetId, height, BitcoinGithubClock.this.name, BitcoinGithubClock.this.resource);
-
-                        } catch (JSONException e) {
+                        } catch (final JSONException e) {
                             e.printStackTrace();
                         }
                     }
 
                     @Override
-                    public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                    public void onFailure(final int statusCode, final Header[] headers, final Throwable throwable, final JSONObject errorResponse) {
                         super.onFailure(statusCode, headers, throwable, errorResponse);
                     }
 
-
                     @Override
-                    public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                    public void onFailure(final int statusCode, final Header[] headers, final String responseString, final Throwable throwable) {
                         super.onFailure(statusCode, headers, responseString, throwable);
                     }
                 });
 
-
             }
         }.run();
     }
-
 }

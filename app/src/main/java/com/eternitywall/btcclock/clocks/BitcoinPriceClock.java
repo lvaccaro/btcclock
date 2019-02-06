@@ -17,73 +17,59 @@ import java.util.Date;
 
 import cz.msebera.android.httpclient.Header;
 
-/**
- * Created by luca on 26/09/2017.
- */
-
 public class BitcoinPriceClock extends Clock {
-    private final static DateFormat formatter = DateFormat.getDateTimeInstance(
+    private static final DateFormat formatter = DateFormat.getDateTimeInstance(
             DateFormat.SHORT,
             DateFormat.SHORT);
-
-    private final static int EVERY = 20;
-    private static int current=-1;
+    private static final int EVERY = 20;
+    private static final String url = "https://api.coinmarketcap.com/v1/ticker/bitcoin/?convert=USD";
+    private static final String title = "BTC/USD last price from coinmarketcap.com";
+    private static int current = -1;
 
     public BitcoinPriceClock() {
-        super(8, "BTC/USD last price from coinmarketcap.com", R.drawable.bitcoin);
+        super(8, title, R.drawable.bitcoin);
     }
 
-    String url = "https://api.coinmarketcap.com/v1/ticker/bitcoin/?convert=USD";
-
-    public void run(final Context context, final int appWidgetId){
+    public void run(final Context context, final int appWidgetId) {
         current++;
         if(current!=0 && current < EVERY)
             return;
         current=0;
-
         new Runnable() {
             @Override
             public void run() {
 
-                AsyncHttpClient client = new AsyncHttpClient();
-                client.get(url,  new JsonHttpResponseHandler(){
+                final AsyncHttpClient client = new AsyncHttpClient();
+                client.get(url,  new JsonHttpResponseHandler() {
 
                     @Override
-                    public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
+                    public void onSuccess(final int statusCode, final Header[] headers, final JSONArray response) {
                         super.onSuccess(statusCode, headers, response);
                         try {
                             final JSONObject jsonObject = response.getJSONObject(0);
-
-                            DecimalFormat df = new DecimalFormat("#,###.##");
-                            String price = df.format( Double.valueOf(jsonObject.getString("price_usd")));
-                            String height = "$ " + price;
-
-                            Long lastUpdated = Long.parseLong( jsonObject.getString("last_updated") );
+                            final DecimalFormat df = new DecimalFormat("#,###.##");
+                            final String price = df.format( Double.valueOf(jsonObject.getString("price_usd")));
+                            final String height = "$ " + price;
+                            final Long lastUpdated = Long.parseLong( jsonObject.getString("last_updated") );
                             final Date date = new Date(lastUpdated*1000L);
-                            String desc = "Coinmarketcap @ " + formatter.format(date);
-
+                            final String desc = "Coinmarketcap @ " + formatter.format(date);
                             BitcoinPriceClock.this.updateListener.callback(context, appWidgetId, height, desc, BitcoinPriceClock.this.resource);
-
-                        } catch (JSONException e) {
+                        } catch (final JSONException e) {
                             e.printStackTrace();
                         }
                     }
 
                     @Override
-                    public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                    public void onFailure(final int statusCode, final Header[] headers, final Throwable throwable, final JSONObject errorResponse) {
                         super.onFailure(statusCode, headers, throwable, errorResponse);
                     }
 
-
                     @Override
-                    public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                    public void onFailure(final int statusCode, final Header[] headers, final String responseString, final Throwable throwable) {
                         super.onFailure(statusCode, headers, responseString, throwable);
                     }
                 });
-
-
             }
         }.run();
     }
-
 }
