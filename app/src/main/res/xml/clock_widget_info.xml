@@ -5,6 +5,8 @@
     android:initialLayout="@layout/clock_widget"
     android:minHeight="40dp"
     android:minWidth="360dp"
+    android:minResizeHeight="20dp"
+    android:minResizeWidth="300dp"
     android:previewImage="@drawable/example_appwidget_preview"
     android:resizeMode="horizontal|vertical"
     android:updatePeriodMillis="86400000"
