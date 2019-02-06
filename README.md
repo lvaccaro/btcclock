@@ -1,7 +1,7 @@
 # btcclock [![Build Status](https://travis-ci.org/lvaccaro/btcclock.svg?branch=master)](https://travis-ci.org/lvaccaro/btcclock)
 [![download](http://style.anu.edu.au/_anu/images/icons/icon-google-play.png)](https://play.google.com/store/apps/details?id=com.eternitywall.btcclock)
 
-Bitcoin and others Android Widget Clock.
+Bitcoin modular Android Widget Clock.
 
 ## Define your new clock
 * Go inside the package
@@ -20,7 +20,7 @@ public class StandardClock extends Clock {
 ```
 * Run the clock behaviour and callback the parent method this.updateListener.callback() with the follows params: context, big widget text line, bottom widget text line, image resource file.
 ```
-    public void run(final Context context, final int appWidgetId){
+    public void run(final Context context, final int appWidgetId) {
         new Runnable() {
             @Override
             public void run() {
@@ -47,4 +47,4 @@ private static Clock[] clocks = new Clock[]{
 ```
 
 ## App Screenshots
-![App Screenshot](https://raw.githubusercontent.com/lvaccaro/btcclock/master/resources/Screenshot_1507475354.png)
+![App Screenshot](https://raw.githubusercontent.com/eternitywall/btcclock/master/resources/Screenshot_1507475354.png)
